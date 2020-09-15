@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guess that number!</title>
+    <style>
+      @media only screen and (max-width: 600px) {
+        body {
+          flex-direction: column;
+        }
+        button {
+          border: none;
+          background: black;
+          text-transform: uppercase;
+          text-transform: inherit;
+          height: 30px;
+          width: 15%;
+          color: plum;
+          letter-spacing: 1px;
+          margin-bottom: 10px;
+          cursor: pointer;
+        }
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      header {
+        flex-shrink: 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffb3ec;
+      }
+
+      header h1 {
+        margin: 0;
+        padding: 20px 40px;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        flex-grow: 1;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      #generateNum {
+        background-color: green;
+        color: white;
+        justify-content: center;
+        align-content: center;
+        width: 100px;
+        margin: 0 50%;
+        margin-top: 10px;
+        position: relative;
+        left: -50px;
+      }
+
+      #selectDifficulty {
+        font-size: 32px;
+        font-family: sans-serif;
+        color: rgb(236, 101, 236);
+      }
+
+      #reset {
+        background-color: tomato;
+        color: white;
+        justify-content: center;
+        align-content: center;
+        width: 100px;
+        margin: 0 50%;
+        margin-top: 10px;
+        position: relative;
+        left: -50px;
+      }
+
+      footer {
+        width: 100%;
+        height: 60px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #ffb3ec;
+      }
+
+      .selected {
+        color: white;
+        background: plum;
+        height: 30%;
+        width: 30%;
+        padding: 5px;
+        margin: 10px;
+      }
+
+      button {
+        border: none;
+        background: black;
+        text-transform: uppercase;
+        height: 50px;
+        width: 10%;
+        color: plum;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: plum;
+        color: black;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <h1>Step right up and guess that number!</h1>
+    </header>
+
+    <main>
+      <p id="selectDifficulty">Select your difficulty</p>
+
+      <section id="changeModes">
+        <button id="easy">Easy</button>
+        <button id="medium">Medium</button>
+        <button id="hard">Hard</button>
+        <button id="extreme">Extreme</button>
+        <button id="master">Master</button>
+      </section>
+
+      <p id="numberRange"></p>
+      <p>You get <span id="guessTries"></span> tries! Good luck!</p>
+
+      <form name="form" id="form">
+        <label for="guess">Insert your Guess:</label>
+        <input
+          id="guess"
+          type="number"
+          placeholder="99"
+          name="guess"
+          required
+        />
+      </form>
+
+      <button id="reset" class="hidden">Try Again?</button>
+
+      <section class="below">
+        <p>Number of Tries: <span id="numberOfGuesses">0</span></p>
+        <p id="notification"></p>
+      </section>
+    </main>
+
+    <footer>Thanks for playing!</footer>
+
+    <script>
+      const guessForm = document.querySelector('#form');
+      const guess = document.querySelector('#guess');
+      const guessTryCount = document.querySelector('#guessTries');
+      const numberOfGuesses = document.querySelector('#numberOfGuesses');
+      const numberRange = document.querySelector('#numberRange');
+
+      const notification = document.querySelector('#notification');
+      const resestsNum = document.querySelector('#reset');
+
+      const changingModes = document.querySelector('#changeModes');
+      const selectDifficulty = document.querySelector('#selectDifficulty');
+      const easyMode = document.querySelector('#easy');
+      const mediumMode = document.querySelector('#medium');
+      const hardMode = document.querySelector('#hard');
+      const extremeMode = document.querySelector('#extreme');
+      const masterMode = document.querySelector('#master');
+
+      let randomNum = 0;
+      let maxNum = 0;
+      let guessCount = 0;
+      let minNum = 1;
+      let gameOver = false;
+
+      easyMode.addEventListener('click', function () {
+        difficulty = 'easy';
+        maxNum = 50;
+        maxGuess = 5;
+        guessTryCount.textContent = '5';
+        changingModes.className = 'hidden';
+        randomNumGen(maxNum);
+        updateModeUI();
+      });
+      mediumMode.addEventListener('click', function () {
+        difficulty = 'medium';
+        maxNum = 100;
+        maxGuess = 5;
+        guessTryCount.textContent = '5';
+        changingModes.className = 'hidden';
+        randomNumGen(maxNum);
+        updateModeUI();
+      });
+      hardMode.addEventListener('click', function () {
+        difficulty = 'hard';
+        maxNum = 250;
+        maxGuess = 5;
+        guessTryCount.textContent = '5';
+        changingModes.className = 'hidden';
+        randomNumGen(maxNum);
+        updateModeUI();
+      });
+      extremeMode.addEventListener('click', function () {
+        difficulty = 'extreme';
+        maxNum = 500;
+        maxGuess = 7;
+        guessTryCount.textContent = '7';
+        changingModes.className = 'hidden';
+        randomNumGen(maxNum);
+        updateModeUI();
+      });
+      masterMode.addEventListener('click', function () {
+        difficulty = 'master';
+        maxNum = 1000;
+        maxGuess = 7;
+        guessTryCount.textContent = '7';
+        changingModes.className = 'hidden';
+        randomNumGen(maxNum);
+        updateModeUI();
+      });
+
+      function randomNumGen() {
+        randomNum = Math.floor(Math.random() * (maxNum - minNum)) + minNum;
+      }
+
+      function resetGame() {
+        resestsNum.className = 'hidden';
+        changingModes.className = '';
+        selectDifficulty.textContent = 'Select your difficulty';
+        guessForm.reset();
+        randomNumGen();
+        guessCount = 0;
+        notification.textContent = '';
+        guessTryCount.textContent = '0';
+        numberOfGuesses.textContent = '';
+      }
+
+      function gameResults() {
+        gameOver = true;
+        resestsNum.className = '';
+      }
+
+      function updateModeUI() {
+        let text;
+        let textDiff;
+        let textTries;
+        switch (difficulty) {
+          case 'easy':
+            text = 'Please choose a number between 1 - 50';
+            textDiff = 'Easy mode activated';
+            break;
+          case 'medium':
+            text = ' Please choose a number between 1 - 100';
+            textDiff = 'Medium mode activated';
+            break;
+          case 'hard':
+            text = 'Please choose a number between 1 - 250';
+            textDiff = 'Hard mode activated';
+            break;
+          case 'extreme':
+            text = 'Please choose a number between 1 - 500';
+            textDiff = 'Extreme mode activated';
+            break;
+          case 'master':
+            text = 'Please choose a number between 1 - 1000';
+            textDiff = 'Master mode activated';
+
+          default:
+            break;
+        }
+        numberRange.textContent = text;
+        selectDifficulty.textContent = textDiff;
+      }
+
+      function guessFormEventHandler(event) {
+        event.preventDefault();
+
+        if (guessCount == 0) {
+        }
+
+        if (guess.value < 1 || guess.value > maxNum) {
+          notification.textContent = 'Guess is outside of scope.';
+          guess.value = '';
+          return;
+        }
+
+        guessCount++;
+        numberOfGuesses.textContent = guessCount;
+
+        if (guessCount >= maxGuess) {
+          notification.textContent = `Sorry, you ran out of guesses! The correct answer was ${randomNum}`;
+          gameResults();
+        } else if (randomNum < guess.value) {
+          notification.textContent = 'Too high! Guess again!';
+        } else if (randomNum > guess.value) {
+          notification.textContent = 'Too low! Guess again!';
+        } else if (randomNum == guess.value) {
+          notification.textContent = "Holy smokes, you're a genius!";
+          gameResults();
+        }
+
+        guess.value = '';
+      }
+
+      function resetButtonEventHandler(event) {
+        notification.textContent = `The correct answer was ${randomNum}! Better luck next time!`;
+        resetGame();
+      }
+
+      guessForm.addEventListener('submit', guessFormEventHandler);
+      resestsNum.addEventListener('click', resetButtonEventHandler);
+    </script>
+  </body>
+</html>
